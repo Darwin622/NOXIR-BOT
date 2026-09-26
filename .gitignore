@@ -1,0 +1,24 @@
+node_modules/
+auth_info/
+auth_info_backup/
+auth_info_backup_badmac_*/
+.env
+media/
+temp/
+noxir-host/
+
+*.bak
+
+# Backups locais
+*.bak
+*.bak2
+*.bak3
+*.bak4
+*.bak5
+*.bak6
+*.backup
+*.backup-*
+*.quebrado
+
+# Backups específicos do connection
+lib/connection.js.*
