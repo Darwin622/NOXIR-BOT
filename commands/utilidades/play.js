@@ -9,44 +9,57 @@ module.exports = {
 
     if (!consulta) {
       return ctx.reply(
-        '🎧 NØXIR PLAY\n\n' +
+        '🟣 NØXIR PLAY\n\n' +
         'Use:\n' +
         '¥play nome da música\n\n' +
         'Exemplo:\n' +
-        '¥play Oruam - 10 Min de Freestyle'
+        '¥play Oruam'
       );
     }
 
     try {
+      await ctx.reply('🔎 Pesquisando no YouTube...');
+
       const resultado = await ytSearch(consulta);
       const video = resultado.videos?.[0];
 
       if (!video) {
-        return ctx.reply('❌ Não encontrei essa música.');
+        return ctx.reply(
+          '❌ Nenhum resultado encontrado.\n\n' +
+          'Tente pesquisar pelo nome da música ou artista.'
+        );
       }
 
+      const titulo = video.title || 'Desconhecido';
+      const artista = video.author?.name || 'Desconhecido';
+      const duracao = video.timestamp || 'Desconhecida';
+      const views = typeof video.views === 'number'
+        ? video.views.toLocaleString('pt-BR')
+        : 'Indisponível';
+
       const texto =
-        '╭━━━〔 🎧 NØXIR PLAY 〕━━━╮\n' +
+        '╭━━━〔 🟣 NØXIR PLAY 〕━━━╮\n' +
         '┃\n' +
-        '┃ 🎵 MÚSICA ENCONTRADA\n' +
+        '┃ 🔎 Pesquisa: ' + consulta + '\n' +
         '┃\n' +
-        '┃ 🎶 Título\n' +
-        '┃ └─ ' + video.title + '\n' +
+        '┃ 🎵 Título\n' +
+        '┃ └─ ' + titulo + '\n' +
         '┃\n' +
-        '┃ 👤 Artista\n' +
-        '┃ └─ ' + (video.author?.name || 'Desconhecido') + '\n' +
+        '┃ 👤 Artista / Canal\n' +
+        '┃ └─ ' + artista + '\n' +
         '┃\n' +
         '┃ ⏱️ Duração\n' +
-        '┃ └─ ' + (video.timestamp || 'Desconhecida') + '\n' +
+        '┃ └─ ' + duracao + '\n' +
         '┃\n' +
-        '┃ ━━━━━━━━━━━━━━━━━━━\n' +
+        '┃ 👀 Visualizações\n' +
+        '┃ └─ ' + views + '\n' +
         '┃\n' +
-        '┃ 📥 ESCOLHA O FORMATO\n' +
+        '┃ 📺 Fonte: YouTube\n' +
         '┃\n' +
-        '┃ 🎵 ÁUDIO\n' +
-        '┃ 🎬 VÍDEO\n' +
+        '┃ 📥 Download disponível\n' +
         '┃\n' +
-        '╰━━━━━━━━━━━━━━━━━━━━━━╯';
+        '╰━━━━━━━━━━━━━━━━━━━━━━╯\n\n' +
+        '🎛️ ESCOLHA O FORMATO';
 
       await ctx.sock.sendMessage(
         ctx.chat,
@@ -56,12 +69,12 @@ module.exports = {
           buttons: [
             {
               buttonId: 'play_audio|' + video.videoId,
-              buttonText: { displayText: '🎵 Áudio' },
+              buttonText: { displayText: '🎧 ÁUDIO' },
               type: 1
             },
             {
               buttonId: 'play_video|' + video.videoId,
-              buttonText: { displayText: '🎬 Vídeo' },
+              buttonText: { displayText: '🎬 VÍDEO' },
               type: 1
             }
           ],
@@ -72,7 +85,10 @@ module.exports = {
 
     } catch (error) {
       console.error('[PLAY]', error);
-      await ctx.reply('❌ Erro ao pesquisar a música.');
+      await ctx.reply(
+        '❌ Ocorreu um erro ao pesquisar no YouTube.\n\n' +
+        'Tente novamente daqui a pouco.'
+      );
     }
   }
 };

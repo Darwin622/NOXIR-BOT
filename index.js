@@ -39,3 +39,8 @@ startBot(handleMessage)
   .catch((error) => {
     console.error('❌ Erro ao iniciar o NØXIR-B∅T:', error);
   });
+
+// 🟣 NØXIR-B∅T — Heartbeat
+setInterval(() => {
+  console.log('🟣 NØXIR-B∅T ativo');
+}, 5000);
